@@ -4,16 +4,16 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.example.earningapp.databinding.ActivityMainBinding
+import com.example.earningapp.databinding.ActivitySignupBinding
 import com.example.earningapp.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
-class MainActivity : AppCompatActivity() {
+class SignUpActivity : AppCompatActivity() {
 
     private val binding by lazy {
-        ActivityMainBinding.inflate(layoutInflater)
+        ActivitySignupBinding.inflate(layoutInflater)
     }
     private lateinit var  mAuth:FirebaseAuth
     private lateinit var mDbRef:DatabaseReference

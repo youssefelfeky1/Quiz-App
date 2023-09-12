@@ -1,5 +1,6 @@
 package com.example.earningapp.ui.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,6 +9,8 @@ import android.view.ViewGroup
 import com.example.earningapp.R
 import com.example.earningapp.databinding.FragmentProfileBinding
 import com.example.earningapp.model.User
+import com.example.earningapp.ui.activity.SignInActivity
+import com.example.earningapp.ui.activity.SignUpActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
@@ -45,6 +48,13 @@ class ProfileFragment : Fragment() {
 
             }
             isExpand = !isExpand
+        }
+        binding.logoutBtn.setOnClickListener {
+            mAuth.signOut()
+            activity!!.finish()
+            startActivity(Intent(requireContext(),SignInActivity::class.java))
+
+
         }
 
         mDbRef.child("Users").child(mAuth.currentUser!!.uid)
