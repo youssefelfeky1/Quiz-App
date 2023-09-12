@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:icon="@drawable/home"
+        android:id="@+id/homeFragment"
+        android:title="Home" />
+    <item android:title="Spin"
+        android:id="@+id/spinFragment"
+        android:icon="@drawable/spin"/>
+    <item android:title="History"
+        android:id="@+id/historyFragment"
+        android:icon="@drawable/history"/>
+    <item android:title="Profile"
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/user"/>
+</menu>
