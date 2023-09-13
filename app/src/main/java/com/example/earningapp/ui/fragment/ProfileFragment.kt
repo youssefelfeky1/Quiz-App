@@ -1,11 +1,19 @@
 package com.example.earningapp.ui.fragment
 
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.graphics.drawable.toIcon
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.earningapp.R
 import com.example.earningapp.databinding.FragmentProfileBinding
 import com.example.earningapp.model.User
@@ -14,6 +22,8 @@ import com.example.earningapp.ui.activity.SignUpActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 
 
 class ProfileFragment : Fragment() {
@@ -23,9 +33,17 @@ class ProfileFragment : Fragment() {
     }
 
     private var isExpand = true
-    private val mDbRef:DatabaseReference = FirebaseDatabase.getInstance().reference
-    private val mAuth:FirebaseAuth=FirebaseAuth.getInstance()
+    private lateinit var mDbRef:DatabaseReference
+    private lateinit var mAuth:FirebaseAuth
+    private lateinit var storageRef:StorageReference
 
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mAuth=FirebaseAuth.getInstance()
+        mDbRef= FirebaseDatabase.getInstance().reference
+        storageRef =  FirebaseStorage.getInstance().reference
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -56,6 +74,29 @@ class ProfileFragment : Fragment() {
 
 
         }
+        binding.editImg.setOnClickListener {
+            selectAndUploadPhotoToFirebaseStorage()
+        }
+
+        storageRef.child(mAuth.currentUser!!.uid).downloadUrl.addOnSuccessListener {
+
+            Glide.with(requireActivity()).load(it).
+            apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+                .into(binding.profileImg)
+
+        }.addOnFailureListener{
+            binding.profileImg.setImageResource(R.drawable.avtar)
+        }
+
+
+
+
+
+
+
+
+
+
 
         mDbRef.child("Users").child(mAuth.currentUser!!.uid)
             .addValueEventListener(
@@ -81,9 +122,51 @@ class ProfileFragment : Fragment() {
         )
 
 
-        // Inflate the layout for this fragment
+
         return binding.root
     }
 
+    private fun selectAndUploadPhotoToFirebaseStorage() {
 
+        val galleryIntent = Intent(Intent.ACTION_PICK)
+        galleryIntent.type = "image/*"
+
+        startActivityForResult(galleryIntent, IMAGE_PICK_CODE)
+    }
+
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+
+        if (requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK) {
+            val selectedImageUri: Uri? = data?.data
+
+            if (selectedImageUri != null) {
+                // Upload the selected image to Firebase Storage
+                uploadImageToFirebaseStorage(selectedImageUri)
+            } else {
+                Toast.makeText(requireContext(), "Failed to select image", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+    private fun uploadImageToFirebaseStorage(imageUri:Uri) {
+
+        val storageRef: StorageReference = FirebaseStorage.getInstance().reference.child(mAuth.currentUser!!.uid)
+
+        storageRef.putFile(imageUri ).addOnSuccessListener {
+            // Image uploaded successfully
+            Toast.makeText(activity, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
+
+            Glide.with(requireActivity()).load(imageUri)
+                .into(binding.profileImg)
+
+        }.addOnFailureListener { e ->
+            // Handle the error
+            Toast.makeText(activity, "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private  val IMAGE_PICK_CODE = 1001
 }

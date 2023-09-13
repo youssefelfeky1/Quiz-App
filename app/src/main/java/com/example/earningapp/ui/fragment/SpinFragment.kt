@@ -1,5 +1,6 @@
 package com.example.earningapp.ui.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.os.CountDownTimer
 import androidx.fragment.app.Fragment
@@ -7,6 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.earningapp.databinding.FragmentSpinBinding
 import com.example.earningapp.model.History
 import com.example.earningapp.model.User
@@ -16,6 +20,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import kotlin.random.Random
+import com.example.earningapp.R
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 
 
 class SpinFragment : Fragment() {
@@ -23,18 +30,34 @@ class SpinFragment : Fragment() {
     private lateinit var binding: FragmentSpinBinding
     private lateinit var timer: CountDownTimer
     private val itemTitles = arrayOf("100","Try Again","500","Try Again","200","Try Again")
-    private val mDbRef: DatabaseReference = FirebaseDatabase.getInstance().reference
-    private val mAuth: FirebaseAuth =FirebaseAuth.getInstance()
+    private lateinit var mDbRef:DatabaseReference
+    private lateinit var mAuth:FirebaseAuth
     private var currentChance = 0L
     private var currentCoin=0L
+    private lateinit var storageRef: StorageReference
 
 
-
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mAuth=FirebaseAuth.getInstance()
+        mDbRef= FirebaseDatabase.getInstance().reference
+        storageRef =  FirebaseStorage.getInstance().reference
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        storageRef.child(mAuth.currentUser!!.uid).downloadUrl.addOnSuccessListener {
+
+            Glide.with(requireActivity()).load(it).
+            apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+                .into(binding.profileImgView)
+
+        }.addOnFailureListener{
+            binding.profileImgView.setImageResource(R.drawable.avtar)
+        }
         binding = FragmentSpinBinding.inflate(inflater,container,false)
         return binding.root
     }

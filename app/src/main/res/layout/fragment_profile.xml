@@ -19,7 +19,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/imageView6"
+                android:id="@+id/profileImg"
                 android:layout_width="160dp"
                 android:layout_height="160dp"
                 android:layout_marginTop="16dp"
@@ -39,9 +39,9 @@
                 android:textColor="#ffffff"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/imageView6"
-                app:layout_constraintStart_toStartOf="@+id/imageView6"
-                app:layout_constraintTop_toBottomOf="@+id/imageView6" />
+                app:layout_constraintEnd_toEndOf="@+id/profileImg"
+                app:layout_constraintStart_toStartOf="@+id/profileImg"
+                app:layout_constraintTop_toBottomOf="@+id/profileImg" />
 
             <LinearLayout
                 android:id="@+id/linearLayout2"
@@ -53,8 +53,8 @@
                 android:background="@drawable/textviewshap"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="@+id/imageView6"
-                app:layout_constraintStart_toStartOf="@+id/imageView6"
+                app:layout_constraintEnd_toEndOf="@+id/profileImg"
+                app:layout_constraintStart_toStartOf="@+id/profileImg"
                 app:layout_constraintTop_toBottomOf="@+id/myNameTxtView">
 
                 <TextView
@@ -170,7 +170,7 @@
                         android:fontFamily="@font/poppins_bold"
                         android:text="Password"
                         android:textColor="#000000"
-                        android:textSize="18sp"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -325,9 +325,9 @@
                 android:text="Edit"
                 android:textSize="16sp"
                 android:textStyle="italic"
-                app:layout_constraintEnd_toEndOf="@+id/imageView6"
-                app:layout_constraintStart_toStartOf="@+id/imageView6"
-                app:layout_constraintTop_toBottomOf="@+id/imageView6"
+                app:layout_constraintEnd_toEndOf="@+id/profileImg"
+                app:layout_constraintStart_toStartOf="@+id/profileImg"
+                app:layout_constraintTop_toBottomOf="@+id/profileImg"
                 tools:textColor="#3F51B5" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

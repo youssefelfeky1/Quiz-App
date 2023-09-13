@@ -8,6 +8,9 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.earningapp.databinding.ActivityQuizBinding
 import com.example.earningapp.model.Question
 import com.example.earningapp.model.User
@@ -19,7 +22,9 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.example.earningapp.R
 class QuizActivity : AppCompatActivity() {
 
     private val binding by lazy {
@@ -32,6 +37,8 @@ class QuizActivity : AppCompatActivity() {
     var currentChance=0L
     private val mDbRef: DatabaseReference = FirebaseDatabase.getInstance().reference
     private val mAuth: FirebaseAuth =FirebaseAuth.getInstance()
+    private lateinit var storageRef: StorageReference
+
     companion object{
         private var firstOpen = true
     }
@@ -41,6 +48,16 @@ class QuizActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        storageRef =  FirebaseStorage.getInstance().reference
+        storageRef.child(mAuth.currentUser!!.uid).downloadUrl.addOnSuccessListener {
+
+            Glide.with(this).load(it).
+            apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+                .into(binding.profileImgView)
+
+        }.addOnFailureListener{
+            binding.profileImgView.setImageResource(R.drawable.avtar)
+        }
 
 
         binding.categoryImg.setImageResource(intent.getIntExtra("categoryImg",0))

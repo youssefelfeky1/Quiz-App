@@ -1,11 +1,15 @@
 package com.example.earningapp.ui.fragment
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.example.earningapp.R
 import com.example.earningapp.adapter.CategoryAdapter
 import com.example.earningapp.databinding.FragmentHomeBinding
@@ -15,6 +19,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 
 
 class HomeFragment : Fragment() {
@@ -23,9 +29,17 @@ class HomeFragment : Fragment() {
         FragmentHomeBinding.inflate(layoutInflater)
     }
 
-    private val mDbRef: DatabaseReference = FirebaseDatabase.getInstance().reference
-    private val mAuth:FirebaseAuth= FirebaseAuth.getInstance()
+    private lateinit var mDbRef:DatabaseReference
+    private lateinit var mAuth:FirebaseAuth
+    private lateinit var storageRef: StorageReference
 
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mAuth=FirebaseAuth.getInstance()
+        mDbRef= FirebaseDatabase.getInstance().reference
+        storageRef =  FirebaseStorage.getInstance().reference
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +50,16 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        storageRef.child(mAuth.currentUser!!.uid).downloadUrl.addOnSuccessListener {
+
+            Glide.with(requireActivity()).load(it).
+            apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
+                .into(binding.profileImgView)
+
+        }.addOnFailureListener{
+            binding.profileImgView.setImageResource(R.drawable.avtar)
+        }
         binding.coinWithdrawal.setOnClickListener {
             val bottomSheetDialogFragment: BottomSheetDialogFragment = Withdrawal()
             bottomSheetDialogFragment.show(requireActivity().supportFragmentManager,"TEST")
